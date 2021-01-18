@@ -132,7 +132,7 @@ mainPage.onload = function(){
     </style>
     <details>
       <summary>TOSXML 1.0.0 @theusaf</summary>
-      <p>Here, you can edit keys. However, changes will only take effect on reload.</p>
+      <p>Here, you can edit keys. However, changes will only take effect on reload. <strong>Also, your changes do get cached, so you may need to clear your cache to restore original text.</strong></p>
       <div id="TOSXML_Container">
         <div id="TOSXML_AllKeys">
           <span>All Keys</span>
@@ -172,7 +172,7 @@ mainPage.onload = function(){
  - <code class="TOSXML_value">${sanitize(item.textContent)}</code>`;
           itemsAll.append(e);
         }
-        for(const i in edited.length){
+        for(const i in edited){
           itemsEdit.append(newEdit(edited[i]));
         }
         for(let i = 0; i < warn.length; i++){
