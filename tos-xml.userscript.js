@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Town of Salem XML Editor
 // @namespace    https://kahoot-win.com
-// @version      1.0.0
+// @version      1.0.1
 // @icon         https://blankmediagames.com/TownOfSalem/favicon.ico
 // @description  Edit the XML files in the web version of Town of Salem
 // @author       theusaf
@@ -35,7 +35,7 @@ mainPage.onload = function(){
   scriptRequest.onload = function(){
     let {responseText:scriptText} = scriptRequest;
     const code = (data)=>{
-        if(data.target.result.url.match(/TownOfSalem\/Unity\/WebAssets.+?\/XMLData\/StringTable.+?\.xml/)){
+        if(data.target.result && data.target.result.url.match(/TownOfSalem\/Unity\/WebAssets.+?\/XMLData\/StringTable.+?\.xml/)){
           // modify!
           const encoder = new TextEncoder(),
             decoder = new TextDecoder("utf8"),
@@ -44,11 +44,15 @@ mainPage.onload = function(){
             XMLData = XMLParser.parseFromString(XMLText,"text/xml").documentElement,
             TOSXML_Replacements = JSON.parse(localStorage.TOSXML_Replacements),
             warn = [];
-          window.parent.TOSXML_Data = {
+          try{
+            window.parent.TOSXML_Data = {
             edited: XMLData,
             original: XMLParser.parseFromString(XMLText,"text/xml").documentElement,
             warn
           };
+          }catch(e){
+            // meh
+          }
           if(TOSXML_Replacements){
             // start modifying
             for(const i in TOSXML_Replacements){
@@ -131,7 +135,7 @@ mainPage.onload = function(){
       }
     </style>
     <details>
-      <summary>TOSXML 1.0.0 @theusaf</summary>
+      <summary>TOSXML 1.0.1 @theusaf</summary>
       <p>Here, you can edit keys. However, changes will only take effect on reload. <strong>Also, your changes do get cached, so you may need to clear your cache to restore original text.</strong></p>
       <div id="TOSXML_Container">
         <div id="TOSXML_AllKeys">
