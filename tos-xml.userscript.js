@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Town of Salem XML Editor
 // @namespace    https://kahoot-win.com
-// @version      1.0.3
+// @version      1.1.0
 // @icon         https://blankmediagames.com/TownOfSalem/favicon.ico
 // @description  Edit the XML files in the web version of Town of Salem
 // @author       theusaf
@@ -115,6 +115,9 @@ mainPage.onload = function(){
         right: 1rem;
         font-size: 2rem;
       }
+      #TOSXML_EditWarnings{
+        flex: 0.5;
+      }
       details>div{
         display: flex;
       }
@@ -138,15 +141,17 @@ mainPage.onload = function(){
         background: black;
         border-radius: 0.5rem;
         padding: 0.25rem;
+        line-height: 1.5rem;
       }
     </style>
     <details>
-      <summary>TOSXML 1.0.3 @theusaf</summary>
+      <summary>TOSXML 1.1.0 @theusaf</summary>
       <p>Here, you can edit keys. However, changes will only take effect on reload. <strong>Also, your changes do get cached, so you may need to clear your cache to restore original text.</strong></p>
       <button id="TOSXML_Hide">Hide</button>
       <div id="TOSXML_Container">
         <div id="TOSXML_AllKeys">
           <span>All Keys</span>
+          <input id="TOSXML_Search" placeholder="Search">
           <div></div>
         </div>
         <div id="TOSXML_SavedEdits">
@@ -227,7 +232,7 @@ mainPage.onload = function(){
       if(info){
         k = document.createElement("code");
         k.textContent = info.key;
-        v.value = sanitize(info.value);
+        v.value = info.value;
       }else{
         k = document.createElement("input");
         k.placeholder = "Key";
@@ -237,9 +242,29 @@ mainPage.onload = function(){
       e.append(k,v,s,d);
       return e;
     }
-    const hideButton = document.querySelector("#TOSXML_Hide");
+    const hideButton = document.querySelector("#TOSXML_Hide"),
+      searchInput = document.querySelector("#TOSXML_Search");
     hideButton.onclick = function(){
       settingsDiv.style.display = "none";
+    };
+    searchInput.oninput = function(){
+      const all = document.querySelectorAll("#TOSXML_AllKeys > div > div"),
+        values = searchInput.value.split(" ");
+      for(let i = 0; i < all.length; i++){
+        const string = all[i].textContent.toLowerCase();
+        let shouldHide = false;
+        all[i].style.display = "";
+        for(let j = 0; j < values.length; j++){
+          const test = values[j].toLowerCase();
+          if(string.indexOf(test) === -1){
+            shouldHide = true;
+            break;
+          }
+        }
+        if(shouldHide){
+          all[i].style.display = "none";
+        }
+      }
     };
   };
 };
