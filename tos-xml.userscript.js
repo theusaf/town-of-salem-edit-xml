@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Town of Salem XML Editor
 // @namespace    https://kahoot-win.com
-// @version      1.0.2
+// @version      1.0.3
 // @icon         https://blankmediagames.com/TownOfSalem/favicon.ico
 // @description  Edit the XML files in the web version of Town of Salem
 // @author       theusaf
@@ -109,6 +109,12 @@ mainPage.onload = function(){
       #TOSXML_Main:hover{
         background: black;
       }
+      #TOSXML_Hide{
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        font-size: 2rem;
+      }
       details>div{
         display: flex;
       }
@@ -135,8 +141,9 @@ mainPage.onload = function(){
       }
     </style>
     <details>
-      <summary>TOSXML 1.0.2 @theusaf</summary>
+      <summary>TOSXML 1.0.3 @theusaf</summary>
       <p>Here, you can edit keys. However, changes will only take effect on reload. <strong>Also, your changes do get cached, so you may need to clear your cache to restore original text.</strong></p>
+      <button id="TOSXML_Hide">Hide</button>
       <div id="TOSXML_Container">
         <div id="TOSXML_AllKeys">
           <span>All Keys</span>
@@ -230,5 +237,9 @@ mainPage.onload = function(){
       e.append(k,v,s,d);
       return e;
     }
+    const hideButton = document.querySelector("#TOSXML_Hide");
+    hideButton.onclick = function(){
+      settingsDiv.style.display = "none";
+    };
   };
 };
