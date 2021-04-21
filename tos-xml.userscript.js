@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Town of Salem XML Editor
 // @namespace    https://kahoot-win.com
-// @version      1.2.0
+// @version      1.2.1
 // @icon         https://blankmediagames.com/TownOfSalem/favicon.ico
 // @description  Edit the XML files in the web version of Town of Salem
 // @author       theusaf
@@ -50,6 +50,10 @@ mainPage.onload = function(){
             warn = [];
           if(!XMLData.querySelector("[key=\"TOSXML_EDITED\"]")) {
             console.warn("[TOSXML] - Saving new original to local storage");
+            const thing = document.createElementNS("TOSXML", "Entry");
+            thing.setAttribute("key", "TOSXML_EDITED");
+            thing.innerHTML = "TRUE";
+            XMLData.append(thing);
             const originalData = XMLData.outerHTML;
             localStorage.TOSXML_OriginalData = originalData;
           } else if(localStorage.TOSXML_OriginalData) {
@@ -68,10 +72,6 @@ mainPage.onload = function(){
           }catch(e){
             // meh
           }
-          const thing = document.createElementNS("TOSXML", "Entry");
-          thing.setAttribute("key", "TOSXML_EDITED");
-          thing.innerHTML = "TRUE";
-          XMLData.append(thing);
           if(TOSXML_Replacements){
             // start modifying
             for(const i in TOSXML_Replacements){
@@ -172,7 +172,7 @@ mainPage.onload = function(){
       }
     </style>
     <details>
-      <summary>TOSXML 1.2.0 @theusaf</summary>
+      <summary>TOSXML 1.2.1 @theusaf</summary>
       <p>Here, you can edit keys. However, changes will only take effect on reload. <strong>Also, your changes do get cached, so you may need to clear your cache to restore original text.</strong></p>
       <button id="TOSXML_Hide" title="Closes the editor until you reload the page.">Close</button>
       <button id="TOSXML_Export" title="Generates an xml file">Export</button>
