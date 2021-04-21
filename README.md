@@ -13,7 +13,3 @@ Userscript for editing Town of Salem's xml files (web)
 
 ## TODO
 - Add import/export button
-- Find a way to not cache changes
-
-### Note:
-May not work on blankmediagames.com (unconfirmed), should work on www.blankmediagames.com
