@@ -62,12 +62,12 @@ mainPage.onload = function(){
             localStorage.TOSXML_OriginalData = originalData;
           } else if(localStorage.TOSXML_OriginalData) {
             // cached the edited version, restore defaults from localStorage
-            XMLData.querySelector("StringTable").outerHTML = localStorage.TOSXML_OriginalData;
+            XMLData.outerHTML = localStorage.TOSXML_OriginalData;
           }
           const thing = document.createElementNS("TOSXML", "Entry");
           thing.setAttribute("key", "TOSXML_EDITED");
           thing.innerHTML = "TRUE";
-          XMLData.querySelector("StringTable").append(thing);
+          XMLData.append(thing);
           if(TOSXML_Replacements){
             // start modifying
             for(const i in TOSXML_Replacements){
