@@ -10,6 +10,3 @@ Userscript for editing Town of Salem's xml files (web)
 
 ## Important
 **Changes made using this userscript are cached. You may have to clear the site cache to restore default messages**
-
-## TODO
-- Add import/export button
