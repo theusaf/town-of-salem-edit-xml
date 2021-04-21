@@ -48,6 +48,17 @@ mainPage.onload = function(){
             XMLData = XMLParser.parseFromString(XMLText,"text/xml").documentElement,
             TOSXML_Replacements = JSON.parse(localStorage.TOSXML_Replacements),
             warn = [];
+          if(!XMLData.querySelector("[key=\"TOSXML_EDITED\"]")) {
+            console.warn("[TOSXML] - Saving new original to local storage");
+            const originalData = XMLData.outerHTML;
+            localStorage.TOSXML_OriginalData = originalData;
+          } else if(localStorage.TOSXML_OriginalData) {
+            console.warn("[TOSXML] - Loading original xml from local storage");
+            // cached the edited version, restore defaults from localStorage
+            XMLData.innerHTML = localStorage.TOSXML_OriginalData
+              .replace(/^<StringTable .*>/,"")
+              .replace(/<\/StringTable>$/m,"");
+          }
           try{
             window.parent.TOSXML_Data = {
               edited: XMLData,
@@ -56,13 +67,6 @@ mainPage.onload = function(){
             };
           }catch(e){
             // meh
-          }
-          if(!XMLData.querySelector("[key=\"TOSXML_EDITED\"]")) {
-            const originalData = XMLData.outerHTML;
-            localStorage.TOSXML_OriginalData = originalData;
-          } else if(localStorage.TOSXML_OriginalData) {
-            // cached the edited version, restore defaults from localStorage
-            XMLData.outerHTML = localStorage.TOSXML_OriginalData;
           }
           const thing = document.createElementNS("TOSXML", "Entry");
           thing.setAttribute("key", "TOSXML_EDITED");
@@ -274,6 +278,7 @@ mainPage.onload = function(){
     let searchTimeout;
     hideButton.onclick = function(){
       settingsDiv.style.display = "none";
+      delete window.TOSXML_Data;
     };
     searchInput.oninput = function(){
       clearTimeout(searchTimeout);
@@ -313,7 +318,7 @@ mainPage.onload = function(){
           item.innerHTML = TOSXML_Replacements[i].value;
         }
       }
-      const blob = new Blob(original.outerHTML, {type: "application/xml"}),
+      const blob = new Blob([original.outerHTML], {type: "application/xml"}),
         url = URL.createObjectURL(blob);
       link.href = url;
       link.style.display = "none";
@@ -331,15 +336,18 @@ mainPage.onload = function(){
           const XMLParser = new DOMParser,
             XMLData = XMLParser.parseFromString(text,"text/xml").documentElement,
             TOSXML_Replacements = {},
-            original = XMLParser.parseFromString(XMLData.original.outerHTML,"text/xml").documentElement,
+            original = XMLParser.parseFromString(TOSXML_Data.original.outerHTML,"text/xml").documentElement,
             keys = XMLData.querySelectorAll("Entry");
           for(let i = 0; i < keys.length; i++) {
             const key = keys[i].getAttribute("key"),
               item = original.querySelector(`[key="${key}"]`);
-            if(item && item.innerHTML === keys[i].innerHTML) {
+            if(item && (item.innerHTML === keys[i].innerHTML || item.getAttribute("xmlns"))) {
               continue;
             }
-            TOSXML_Replacements[key] = keys[i].innerHTML;
+            TOSXML_Replacements[key] = {
+              key,
+              value: keys[i].innerHTML
+            };
           }
           localStorage.TOSXML_Replacements = JSON.stringify(TOSXML_Replacements);
           alert("Imported XML File Successfully! Changes will be applied after reloading.");
