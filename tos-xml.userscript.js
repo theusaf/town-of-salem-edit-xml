@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Town of Salem XML Editor
 // @namespace    https://kahoot-win.com
-// @version      1.2.2
+// @version      1.2.3
 // @icon         https://blankmediagames.com/TownOfSalem/favicon.ico
 // @description  Edit the XML files in the web version of Town of Salem
 // @author       theusaf
@@ -39,6 +39,9 @@ mainPage.onload = function(){
   scriptRequest.onload = function(){
     let {responseText:scriptText} = scriptRequest;
     const code = (data)=>{
+        function sanitize(data){
+          return data.replace(/</mg,"&lt;").replace(/>/mg,"&gt;");
+        }
         if(data.target.result && data.target.result.url && data.target.result.url.match(/TownOfSalem\/Unity\/WebAssets.+?\/XMLData\/StringTable.+?\.xml/)){
           // modify!
           const encoder = new TextEncoder(),
@@ -63,6 +66,8 @@ mainPage.onload = function(){
               .replace(/^<StringTable .*>/,"")
               .replace(/<\/StringTable>$/m,"");
             XMLText = XMLData.outerHTML;
+          } else {
+            console.error("[TOSXML] - Edited XML Detected, but no local version found. Perhaps localStorage was cleared?")
           }
           try{
             window.parent.TOSXML_Data = {
@@ -84,7 +89,11 @@ mainPage.onload = function(){
                 });
                 continue;
               }
-              item.innerHTML = TOSXML_Replacements[i].value;
+              try {
+                item.innerHTML = TOSXML_Replacements[i].value;
+              } catch(err) {
+                item.innerHTML = sanitize(TOSXML_Loaded[i].value);
+              }
             }
             data.target.result.xhr.response = encoder.encode(XMLData.outerHTML).buffer;
           }
@@ -173,7 +182,7 @@ mainPage.onload = function(){
       }
     </style>
     <details>
-      <summary>TOSXML 1.2.2 @theusaf</summary>
+      <summary>TOSXML 1.2.3 @theusaf</summary>
       <p>Here, you can edit keys. However, changes will only take effect on reload. <strong>Also, your changes do get cached, so you may need to clear your cache to restore original text.</strong></p>
       <button id="TOSXML_Hide" title="Closes the editor until you reload the page.">Close</button>
       <button id="TOSXML_Export" title="Generates an xml file">Export</button>
